@@ -1,0 +1,19 @@
+{
+    "name": "com.fixer33.orientation-ui-elements.Editor",
+    "rootNamespace": "OrientationElements.Editor",
+    "references": [
+        "com.fixer33.orientation-ui-elements",
+        "UnityEditor.UI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

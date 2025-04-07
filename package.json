@@ -1,0 +1,12 @@
+{
+  "name": "com.fixer33.orientation-ui-elements",
+  "version": "1.0.0",
+  "displayName": "Orientation UI Elements",
+  "description": "Package that simplifies creating UI prefabs for portrait and album orientation",
+  "unity": "6000.0",
+  "author": {
+    "name": "Fixer33",
+    "email": "fsfixer33@gmail.com",
+    "url": "https://github.com/Fixer33"
+  }
+}
