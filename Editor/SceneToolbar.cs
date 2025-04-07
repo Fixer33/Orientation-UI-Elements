@@ -1,3 +1,4 @@
+using System;
 using UnityEditor;
 using UnityEditor.Overlays;
 using UnityEditor.SceneManagement;
@@ -9,42 +10,55 @@ namespace OrientationElements.Editor
     [Overlay(typeof(SceneView), "Orientation Elements tools", true)]
     internal class SceneToolbar : Overlay
     {
-        public static bool IsRecording { get; private set; }
+        public static bool IsRecording
+        {
+            get => _isRecording;
+            set
+            {
+                _isRecording = value;
+                OrientationElementsManager.IsRecording = value;
+                Updated?.Invoke();
+            }
+        }
+        private static bool _isRecording;
+        private static event Action Updated;
         
         private const string RECORDING_BTN_RECORDING_CLASS_NAME = "isRecording";
+
+        private Button _recordingBtn;
         
         public override VisualElement CreatePanelContent()
         {
-            SceneView.windowFocusChanged += SceneViewOnWindowFocusChanged;
+            SceneView.duringSceneGui -= OnSceneViewGUI;
+            SceneView.duringSceneGui += OnSceneViewGUI;
             
-            Debug.Log("AAA");
+            Updated += OnUpdated;
+            
             var container = new VisualElement();
             container.styleSheets.Add(Utilities.LoadAssetAtPath<StyleSheet>("Packages/com.fixer33.orientation-ui-elements/Editor/Styles/SceneToolbar.uss"));
 
             CreateScreenSizeElements(container, "Album", "AlbumSize");
             CreateScreenSizeElements(container, "Portrait", "PortraitSize");
 
-            Button recordingBtn = new Button()
+            _recordingBtn = new Button()
             {
                 name = "RecordingBtn",
                 text = ""
             };
-            recordingBtn.clicked += () =>
+            _recordingBtn.clicked += () =>
             {
                 IsRecording = IsRecording == false;
-                if (IsRecording)
-                    recordingBtn.AddToClassList(RECORDING_BTN_RECORDING_CLASS_NAME);
-                else 
-                    recordingBtn.RemoveFromClassList(RECORDING_BTN_RECORDING_CLASS_NAME);
             };
-            container.Add(recordingBtn);
+            container.Add(_recordingBtn);
 
+            IsRecording = false;
             return container;
         }
 
         public override void OnWillBeDestroyed()
         {
-            SceneView.windowFocusChanged -= SceneViewOnWindowFocusChanged;
+            SceneView.duringSceneGui -= OnSceneViewGUI;
+            Updated -= OnUpdated;
             base.OnWillBeDestroyed();
         }
 
@@ -52,7 +66,7 @@ namespace OrientationElements.Editor
         {
             VisualElement container = new VisualElement()
             {
-                name = "Screen size element"
+                name = "ScreenSizeElement"
             };
             rootElement.Add(container);
 
@@ -64,7 +78,7 @@ namespace OrientationElements.Editor
 
             Vector2IntField field = new Vector2IntField()
             {
-                name = "Input field"
+                name = "InputField"
             };
 
             Vector2Int size = new Vector2Int(EditorPrefs.GetInt(saveKey + "_x", 1440),
@@ -81,7 +95,7 @@ namespace OrientationElements.Editor
 
             Button setBtn = new Button()
             {
-                name = "Set orientation btn",
+                name = "SetOrientationBtn",
                 text = "Set"
             };
 
@@ -112,40 +126,36 @@ namespace OrientationElements.Editor
             }
             else
             {
-                UnityEngine.Debug.LogWarning("No Scene View available.");
+                Debug.LogWarning("No Scene View available.");
             }
         }
 
-        private void SceneViewOnWindowFocusChanged()
+        private void OnSceneViewGUI(SceneView sceneView)
         {
-            var prefabStage = PrefabStageUtility.GetCurrentPrefabStage();
-            bool isInPrefabMode = prefabStage;
             var display = rootVisualElement.style.display.value;
 
-            switch (isInPrefabMode, display)
+            switch (OrientationElementsManager.ConditionsAreMet, display)
             {
                 case (false, DisplayStyle.None):
                     return;
                 case (false, DisplayStyle.Flex):
                     rootVisualElement.style.display = DisplayStyle.None;
+                    IsRecording = false;
                     return;
-            }
-            
-            bool hasCanvas = prefabStage.prefabContentsRoot.GetComponentInChildren<Canvas>() != null;
-            Debug.Log(hasCanvas);
-            switch (isInPrefabMode, display, hasCanvas)
-            {
-                case (true, DisplayStyle.None, false):
-                    return;
-                case (true, DisplayStyle.Flex, false):
-                    rootVisualElement.style.display = DisplayStyle.None;
-                    return;
-                case (true, DisplayStyle.None, true):
+                case (true, DisplayStyle.None):
                     rootVisualElement.style.display = DisplayStyle.Flex;
-                    return;
-                case (true, DisplayStyle.Flex, true):
+                    break;
+                case (true, DisplayStyle.Flex):
                     return;
             }
+        }
+
+        private void OnUpdated()
+        {
+            if (IsRecording)
+                _recordingBtn.AddToClassList(RECORDING_BTN_RECORDING_CLASS_NAME);
+            else 
+                _recordingBtn.RemoveFromClassList(RECORDING_BTN_RECORDING_CLASS_NAME);
         }
     }
 }

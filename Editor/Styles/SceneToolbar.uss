@@ -1,0 +1,39 @@
+#ScreenSizeElement {
+    
+}
+
+#ScreenSizeElement>#Header {
+    width: 100%;
+    -unity-text-align: middle-center;
+    font-size: 16px;
+    margin-bottom: 3px;
+}
+
+#ScreenSizeElement>#InputField {
+    width: 100%;
+}
+
+#ScreenSizeElement>#SetOrientationBtn {
+    width: 100%;
+}
+
+#RecordingBtn {
+    --recording-btn-size: 20px;
+    --recording-btn-color-default: gray;
+    --recording-btn-color-recording: darkred;
+    
+    height: var(--recording-btn-size);
+    width: var(--recording-btn-size);
+    align-self: center;
+    border-radius: var(--recording-btn-size);
+    background-color: var(--recording-btn-color-default);
+    
+    transition-property: all;
+    transition-delay: 0.1s;
+}
+
+#RecordingBtn.isRecording {
+    background-color: var(--recording-btn-color-recording);
+    border-color: var(--recording-btn-color-default);
+    border-width: 3px;
+}

@@ -5,6 +5,8 @@
 
 Simplifies creating UI screens that are applicable for album and portrait screen orientation at the same time
 
+P.S. Package is in development - you probably going to encounter some bugs
+
 ## Installation
 
 ### Using UPM (Unity Package Manager)

@@ -2,16 +2,15 @@
     "name": "com.fixer33.orientation-ui-elements",
     "rootNamespace": "OrientationElements",
     "references": [
-        
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
+    "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [
-        
-    ],
+    "versionDefines": [],
     "noEngineReferences": false
 }
