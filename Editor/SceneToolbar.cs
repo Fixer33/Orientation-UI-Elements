@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Overlays;
 using UnityEditor.SceneManagement;
@@ -99,7 +100,7 @@ namespace OrientationElements.Editor
                 text = "Set"
             };
 
-            setBtn.clicked += () =>
+            setBtn.clicked += async () =>
             {
                 if (GameViewUtils.SizeExists(GameViewSizeGroupType.Standalone, size.x, size.y) == false)
                 {
@@ -108,7 +109,9 @@ namespace OrientationElements.Editor
                     return;
                 }
 
+                IsRecording = false;
                 GameViewUtils.SetSize(GameViewUtils.FindSize(GameViewSizeGroupType.Standalone, size.x, size.y));
+                await Task.Delay(300);
                 SwitchToSceneView();
             };
 
