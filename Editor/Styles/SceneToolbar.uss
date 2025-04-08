@@ -1,5 +1,5 @@
 #ScreenSizeElement {
-    
+    margin-bottom: 3px;
 }
 
 #ScreenSizeElement>#Header {
@@ -36,4 +36,12 @@
     background-color: var(--recording-btn-color-recording);
     border-color: var(--recording-btn-color-default);
     border-width: 3px;
+}
+
+#ManipulationButtons {
+    flex-direction: row;
+}
+
+#ManipulationButtons>Button {
+    width: 50%;
 }

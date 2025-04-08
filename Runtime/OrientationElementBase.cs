@@ -1,4 +1,4 @@
-using UnityEditor;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace OrientationElements
@@ -22,11 +22,10 @@ namespace OrientationElements
         [SerializeField] private TT _cachedVertical, _cachedHorizontal;
         [SerializeField, HideInInspector] private bool _hasVerticalCache, _hasHorizontalCache;
         private T _element;
-        private ScreenOrientation? _lastOrientation;
 
         private void Update()
         {
-            var orientation = Screen.width > Screen.height? ScreenOrientation.LandscapeLeft : ScreenOrientation.Portrait;
+            var orientation = Screen.width > Screen.height ? Orientation.Landscape : Orientation.Portrait;
             
             _cachedVertical ??= new TT();
             _cachedHorizontal ??= new TT();
@@ -34,65 +33,66 @@ namespace OrientationElements
             {
                 UpdatePlaying(orientation);
             }
-            else
-            {
-                UpdateEditor(orientation);
-            }
         }
 
-        private void UpdateEditor(ScreenOrientation orientation)
+        private void OnEnable()
         {
 #if UNITY_EDITOR
-            if (OrientationElementsManager.ConditionsAreMet == false)
-            {
-                WriteCacheToElement(Element,
-                    orientation == ScreenOrientation.Portrait ? _cachedVertical : _cachedHorizontal);
-                return;
-            }
-
-            if (_lastOrientation.HasValue == false)
-            {
-                _lastOrientation = orientation;
-                return;
-            }
-
-            if (orientation == ScreenOrientation.Portrait)
-                HandleEditorFor(ref _hasVerticalCache, ref _cachedVertical, Element);
-            else
-                HandleEditorFor(ref _hasHorizontalCache, ref _cachedHorizontal, Element);
+            OrientationElementsManager.LoadOrientationDataRequested -= LoadOrientation;
+            OrientationElementsManager.LoadOrientationDataRequested += LoadOrientation;
             
-            _lastOrientation = orientation;
-
-            void HandleEditorFor(ref bool hasCache, ref TT cache, T element)
-            {
-                switch (_lastOrientation.Value == orientation, hasCache)
-                {
-                    case (false, true):
-                        WriteCacheToElement(element, cache);
-                        Debug.Log($"[{gameObject.name}] Writing data into element for {_lastOrientation.Value}");
-                        break;
-                    case (false, false):
-                    case (true, false):
-                    case (true, true):
-                        if (OrientationElementsManager.IsRecording == false)
-                            return;
-                        
-                        if (IsElementDataEqualTo(Element, cache))
-                            return;
-                        
-                        cache = GetCacheForCurrentElement(element);
-                        hasCache = true;
-                        EditorUtility.SetDirty(this);
-                        Debug.Log($"[{gameObject.name}] Writing data to cache for {_lastOrientation.Value}");
-                        break;
-                }
-            }
+            OrientationElementsManager.SaveOrientationDataRequested -= SaveOrientation;
+            OrientationElementsManager.SaveOrientationDataRequested += SaveOrientation;
 #endif
         }
 
-        private void UpdatePlaying(ScreenOrientation orientation)
+        private void OnDisable()
         {
-            if (orientation == ScreenOrientation.Portrait)
+#if UNITY_EDITOR
+            OrientationElementsManager.LoadOrientationDataRequested -= LoadOrientation;
+            OrientationElementsManager.SaveOrientationDataRequested -= SaveOrientation;
+#endif
+        }
+
+#if UNITY_EDITOR
+        private void SaveOrientation(Orientation orientation)
+        {
+            if (orientation == Orientation.Portrait)
+                TrySaveOrientation(ref _hasVerticalCache, ref _cachedVertical);
+            else
+                TrySaveOrientation(ref _hasHorizontalCache, ref _cachedHorizontal);
+            
+            void TrySaveOrientation(ref bool hasCache, ref TT cache)
+            {
+                cache = GetCacheForCurrentElement(Element);
+                hasCache = true;
+                UnityEditor.EditorUtility.SetDirty(this);
+            }
+        }
+
+        private void LoadOrientation(Orientation orientation, List<Behaviour> behaviours)
+        {
+            if (orientation == Orientation.Portrait)
+                TryLoadOrientation(ref _hasVerticalCache, ref _cachedVertical);
+            else
+                TryLoadOrientation(ref _hasHorizontalCache, ref _cachedHorizontal);
+            
+            void TryLoadOrientation(ref bool hasCache, ref TT cache)
+            {
+                if (hasCache == false)
+                {
+                    behaviours.Add(this);
+                    return;
+                }
+
+                WriteCacheToElement(Element, cache);
+            }
+        }
+#endif
+
+        private void UpdatePlaying(Orientation orientation)
+        {
+            if (orientation == Orientation.Portrait)
             {
                 if (IsElementDataEqualTo(Element, _cachedVertical))
                     return;
