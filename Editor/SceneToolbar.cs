@@ -14,7 +14,10 @@ namespace OrientationElements.Editor
             SceneView.duringSceneGui -= OnSceneViewGUI;
             SceneView.duringSceneGui += OnSceneViewGUI;
             
-            var container = new VisualElement();
+            var container = new VisualElement()
+            {
+                name = "SceneToolbarRoot"
+            };
             container.styleSheets.Add(Utilities.LoadAssetAtPath<StyleSheet>("Packages/com.fixer33.orientation-ui-elements/Editor/Styles/SceneToolbar.uss"));
 
             CreateScreenSizeElements(container, "Landscape", "LandscapeSize", Orientation.Landscape);

@@ -1,47 +1,137 @@
+:root {
+    --bg-base: #0F1115; --bg-surface: #171A21; --bg-raised: #1E222B; --bg-overlay: #272C37; --bg-hover: #2E3441;
+    --border-subtle: #262B35; --border-default: #343B49; --border-strong: #475066;
+    --text-primary: #E8ECF3; --text-secondary: #A3ACBD; --text-muted: #6F7889; --text-on-accent: #FFFFFF;
+    --accent: #3B82F6; --accent-hover: #5B9BFF; --accent-pressed: #2B6AD8; --accent-subtle: #1B2A47; --accent-border: #2F5FB3;
+    --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px;
+    --radius-sm: 6px; --radius-md: 10px; --radius-lg: 14px;
+}
+
+/* Overlay panel: surface fill, default border, radius 12 */
+#SceneToolbarRoot {
+    background-color: var(--bg-surface);
+    border-width: 1px;
+    border-color: var(--border-default);
+    border-radius: 12px;
+    padding: var(--space-4);
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+/* Each block (Landscape / Portrait) is a card */
 #ScreenSizeElement {
-    margin-bottom: 3px;
+    background-color: var(--bg-raised);
+    border-width: 1px;
+    border-color: var(--border-subtle);
+    border-radius: 12px;
+    padding: var(--space-4);
+    margin-bottom: var(--space-3);
 }
 
 #ScreenSizeElement>#Header {
-    width: 100%;
-    -unity-text-align: middle-center;
+    -unity-font-style: bold;
     font-size: 16px;
-    margin-bottom: 3px;
+    color: var(--text-primary);
+    -unity-text-align: middle-left;
+    margin-bottom: var(--space-3);
+    padding: 0;
 }
 
+/* Vector2Int row: X / Y fields */
 #ScreenSizeElement>#InputField {
+    flex-direction: row;
+    align-items: center;
     width: 100%;
+    margin-bottom: var(--space-3);
+    padding: 0;
+    background-color: transparent;
+    border-width: 0;
 }
 
+#InputField .unity-base-field__label {
+    min-width: 0;
+    width: auto;
+    flex-grow: 0;
+    margin-right: var(--space-2);
+    font-size: 12px;
+    -unity-font-style: bold;
+    color: var(--text-muted);
+}
+
+#InputField .unity-base-field__input {
+    flex-grow: 1;
+    background-color: var(--bg-base);
+    border-width: 1px;
+    border-color: var(--border-default);
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-3);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+#InputField .unity-base-field__input:focus {
+    border-color: var(--accent);
+}
+
+#InputField .unity-base-field__input:hover {
+    border-color: var(--border-strong);
+}
+
+#InputField .unity-base-field__input > .unity-text-element,
+#InputField .unity-base-field__input > TextField > .unity-text-element {
+    color: var(--text-primary);
+}
+
+/* Shared button recipe */
+#ScreenSizeElement Button {
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-4);
+    font-size: 14px;
+    -unity-font-style: normal;
+    border-width: 1px;
+    border-color: var(--border-default);
+    background-color: var(--bg-raised);
+    color: var(--text-primary);
+    -unity-text-align: middle-center;
+    transition-duration: 0.15s;
+}
+
+#ScreenSizeElement Button:hover {
+    background-color: var(--bg-hover);
+}
+
+#ScreenSizeElement Button:active {
+    background-color: var(--bg-overlay);
+}
+
+/* Primary: Set game view resolution */
 #ScreenSizeElement>#SetOrientationBtn {
     width: 100%;
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--text-on-accent);
+    margin-bottom: var(--space-3);
 }
 
-#RecordingBtn {
-    --recording-btn-size: 20px;
-    --recording-btn-color-default: gray;
-    --recording-btn-color-recording: darkred;
-    
-    height: var(--recording-btn-size);
-    width: var(--recording-btn-size);
-    align-self: center;
-    border-radius: var(--recording-btn-size);
-    background-color: var(--recording-btn-color-default);
-    
-    transition-property: all;
-    transition-delay: 0.1s;
+#ScreenSizeElement>#SetOrientationBtn:hover {
+    background-color: var(--accent-hover);
+    border-color: var(--accent-hover);
 }
 
-#RecordingBtn.isRecording {
-    background-color: var(--recording-btn-color-recording);
-    border-color: var(--recording-btn-color-default);
-    border-width: 3px;
+#ScreenSizeElement>#SetOrientationBtn:active {
+    background-color: var(--accent-pressed);
+    border-color: var(--accent-pressed);
 }
 
+/* Secondary: Load / Save */
 #ManipulationButtons {
     flex-direction: row;
 }
 
 #ManipulationButtons>Button {
-    width: 50%;
+    width: auto;
+    flex-grow: 0;
+    min-width: 72px;
+    margin-right: var(--space-2);
 }
+
